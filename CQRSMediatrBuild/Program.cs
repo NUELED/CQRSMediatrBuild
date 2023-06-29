@@ -2,13 +2,16 @@
 
 using CQRSMediatrBuild;
 using CQRSMediatrBuild.Behavior;
+using CQRSMediatrBuild.DataContext;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly)); //New way to register MediatR!
 builder.Services.AddSingleton<FakeDataStore>();
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("MyCon")));
 builder.Services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
 builder.Services.AddControllers();
